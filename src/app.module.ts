@@ -1,39 +1,42 @@
 import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
-import { User } from './user/user.model';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { PostsModule } from './posts/posts.module';
-import { Post } from './posts/posts.model';
-import { Dialect } from 'sequelize';
+import { BookingsModule } from './booking/bookings.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
-  controllers: [],
-  providers: [],
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      isGlobal: true,
     }),
-    SequelizeModule.forRoot({
-      dialect: <Dialect>'postgres',
-      protocol: 'postgres',
-      // ssl: Boolean(process.env.SSL),
-      dialectOptions: {
-        ssl: Boolean(process.env.SSL) ? true : false,
-      },
-      host: process.env.POSTGRES_HOST,
-      port: Number(process.env.POSTGRESS_PORT),
-      username: process.env.POSTGRES_USER,
-      password: String(process.env.POSTGRESS_PASSWORD),
-      database: String(process.env.POSTGRES_DB),
-      models: [User, Post],
-      autoLoadModels: true,
+    JwtModule.register({
+      global: true,
     }),
-
+    PrismaModule,
     UserModule,
     AuthModule,
-    PostsModule,
+    BookingsModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 15,
+      },
+    ]),
+  ],
+  controllers: [AppController],
+  providers: [
+    JwtService,
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

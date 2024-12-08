@@ -22,8 +22,8 @@ async function start() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Zenbit.tech test')
-    .setDescription('Zenbit.tech test')
+    .setTitle('keym test')
+    .setDescription('keym test')
     .setVersion('1.0.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

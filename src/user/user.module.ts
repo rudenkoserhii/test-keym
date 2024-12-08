@@ -1,14 +1,12 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
+import { UserRepository } from './user.repositoty';
 import { UserService } from './user.service';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from './user.model';
-import { AuthModule } from '../auth/auth.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
+  imports: [PrismaModule],
   controllers: [UserController],
-  providers: [UserService],
-  imports: [SequelizeModule.forFeature([User]), forwardRef(() => AuthModule)],
-  exports: [UserService],
+  providers: [UserService, UserRepository],
 })
 export class UserModule {}

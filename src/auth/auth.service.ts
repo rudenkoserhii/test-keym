@@ -5,21 +5,22 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { User } from '../user/user.model';
 import { AuthDto } from './dto/auth.dto';
+import { PrismaClient, User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
+    private prisma: PrismaClient,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async registration(userDto: CreateUserDto) {
-    const candidate = await this.userService.getUserByEmail(userDto.email);
+    const candidate = await this.prisma.user.findFirst({
+      where: { email: userDto.email },
+    });
     if (candidate) {
       throw new HttpException(
         'User with such e-mail is exist',
@@ -27,9 +28,11 @@ export class AuthService {
       );
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5);
-    const user = await this.userService.createUser({
-      ...userDto,
-      password: hashPassword,
+    const user = await this.prisma.user.create({
+      data: {
+        ...userDto,
+        password: hashPassword,
+      }
     });
     return this.generateToken(user);
   }
@@ -40,7 +43,9 @@ export class AuthService {
   }
 
   async forgot(userDto: CreateUserDto) {
-    const candidate = await this.userService.getUserByEmail(userDto.email);
+    const candidate = await this.prisma.user.findFirst({
+      where: { email: userDto.email },
+    });
     if (!candidate) {
       throw new HttpException(
         'No user with such e-mail',
@@ -48,7 +53,11 @@ export class AuthService {
       );
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5);
-    const user = await this.userService.updateUser(userDto.email, hashPassword);
+    const user = await this.prisma.user.update({
+      where: { email: userDto.email },
+      data: { password: hashPassword },
+    }
+    );
     return this.generateToken(user);
   }
 
@@ -61,7 +70,9 @@ export class AuthService {
   }
 
   private async validateUser(data: AuthDto) {
-    const user = await this.userService.getUserByEmail(data.email);
+    const user = await this.prisma.user.findFirst({
+      where: { email: data.email },
+    });
     const passwordEquals = await bcrypt.compare(data.password, user.password);
     if (user && passwordEquals) {
       return user;

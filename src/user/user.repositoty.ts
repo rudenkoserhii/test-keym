@@ -1,12 +1,11 @@
+import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
-import { UserRepository } from './user.repositoty';
 
 @Injectable()
-export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+export class UserRepository {
+  constructor(private prisma: PrismaService) {}
 
-  
   /**
    * @desc Find a user by id
    * @param where Prisma.UserWhereUniqueInput	
@@ -14,7 +13,9 @@ export class UserService {
    *       If the user is not found, return null
    */
   findById(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.userRepository.findById(where);
+    return this.prisma.user.findUnique({
+      where,
+    });
   }
 
   /**
@@ -24,7 +25,7 @@ export class UserService {
    *       If the user is not found, return null
    */
   async getUserByEmail(params: Prisma.UserFindFirstArgs): Promise<User | null> {
-    return this.userRepository.getUserByEmail(params);
+    return this.prisma.user.findFirst(params);
   }
 
   /**
@@ -33,7 +34,7 @@ export class UserService {
    * @returns Promise<User>
    */
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.userRepository.createUser(data);
+    return this.prisma.user.create({ data });
   }
 
   /**
@@ -46,6 +47,9 @@ export class UserService {
     where: Prisma.UserWhereUniqueInput,
     data: Prisma.UserUpdateInput,
   ): Promise<User> {
-    return this.userRepository.updateUser(where, data);
+    return this.prisma.user.update({
+        where,
+        data,
+      });
   }
 }
