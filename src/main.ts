@@ -5,7 +5,7 @@ import { ValidationPipe } from './pipes/validation.pipe';
 import * as session from 'express-session';
 
 async function start() {
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 5555;
   const app = await NestFactory.create(AppModule, { cors: true });
 
   app.enableCors({

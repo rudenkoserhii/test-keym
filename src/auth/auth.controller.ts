@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import User from '../user/user.entity';
+import { UserEntity } from '../user/user.entity';
 import { AuthDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -13,20 +13,20 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
   @ApiOperation({ summary: 'Create user' })
-  @ApiResponse({ status: 201, type: [User] })
+  @ApiResponse({ status: 201, type: [UserEntity] })
   @Post('signup')
   registration(@Body() userDto: CreateUserDto) {
     return this.authService.registration(userDto);
   }
   @ApiOperation({ summary: 'Get user' })
-  @ApiResponse({ status: 200, type: [User] })
+  @ApiResponse({ status: 200, type: [UserEntity] })
   @Post('login')
   login(@Body() data: AuthDto) {
     console.log(data);
     return this.authService.login(data);
   }
   @ApiOperation({ summary: 'Forgot password' })
-  @ApiResponse({ status: 200, type: [User] })
+  @ApiResponse({ status: 200, type: [UserEntity] })
   @UseGuards(JwtAuthGuard)
   @Post('forgot')
   forgot(@Body() userDto: CreateUserDto) {

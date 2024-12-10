@@ -1,15 +1,9 @@
-import { Address, User, Booking } from '@prisma/client';
+import { User, Booking } from '@prisma/client';
 
-export default class UserEntity implements User {
-  readonly id!: string;
-
-  readonly email!: string;
-
-  readonly password!: string | null;
-
-  readonly name!: string;
-
-  readonly address: Address;
-
-  readonly bookings: Booking[];
+export class UserEntity implements User {
+  id!: string;
+  email!: string;
+  password!: string | null;
+  name!: string;
+  bookings: Booking[];
 }

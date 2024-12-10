@@ -8,7 +8,7 @@ export class UserRepository {
 
   /**
    * @desc Find a user by id
-   * @param where Prisma.UserWhereUniqueInput	
+   * @param where Prisma.UserWhereUniqueInput
    * @returns Promise<User | null>
    *       If the user is not found, return null
    */
@@ -48,8 +48,8 @@ export class UserRepository {
     data: Prisma.UserUpdateInput,
   ): Promise<User> {
     return this.prisma.user.update({
-        where,
-        data,
-      });
+      where,
+      data,
+    });
   }
 }

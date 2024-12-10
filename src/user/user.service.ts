@@ -6,10 +6,9 @@ import { UserRepository } from './user.repositoty';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  
   /**
    * @desc Find a user by id
-   * @param where Prisma.UserWhereUniqueInput	
+   * @param where Prisma.UserWhereUniqueInput
    * @returns Promise<User | null>
    *       If the user is not found, return null
    */
