@@ -1,15 +1,16 @@
+import * as bcrypt from 'bcryptjs';
 import {
   HttpException,
   HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUserDto } from '../user/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
-import { AuthDto } from './dto/auth.dto';
 import { User } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+
+import { AuthDto } from 'auth/dto';
+import { PrismaService } from 'prisma/prisma.service';
+import { CreateUserDto } from 'user/dto';
 
 @Injectable()
 export class AuthService {
@@ -38,7 +39,7 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async login(data: AuthDto) {
+  async login(data: AuthDto) {    
     const user = await this.validateUser(data);
     return this.generateToken(user);
   }
@@ -73,6 +74,12 @@ export class AuthService {
     const user = await this.prisma.user.findFirst({
       where: { email: data.email },
     });
+    if (!user) {
+      throw new UnauthorizedException({
+        message: 'The user not exists',
+      });
+    }
+    
     const passwordEquals = await bcrypt.compare(data.password, user.password);
     if (user && passwordEquals) {
       return user;

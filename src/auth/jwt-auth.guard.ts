@@ -7,6 +7,9 @@ import {
 import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
 
+const TOKEN_TYPE = 'Bearer';
+const TOKEN_DELIMITER = ' ';
+
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
@@ -14,26 +17,27 @@ export class JwtAuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest();    
     try {
       const authHeader = req?.headers?.authorization;
       if (!authHeader) {
         throw new UnauthorizedException({ message: 'Authorization header missing' });
       }
-      const bearer = authHeader?.split(' ')[0];
-      const token = authHeader?.split(' ')[1];
-
-      if (bearer !== 'Bearer' || !token) {
+      const [bearer, token] = authHeader?.split(TOKEN_DELIMITER) || [];
+      
+      if (bearer !== TOKEN_TYPE || !token) {
         throw new UnauthorizedException({
           message: 'User is not authorized',
         });
       }
 
       const user = this.jwtService.verify(token);
+
       req.user = user;
       return true;
-    } catch (e) {
+    } catch (error) {
       throw new UnauthorizedException({
+        error: error?.message,
         message: 'User is not authorized',
       });
     }

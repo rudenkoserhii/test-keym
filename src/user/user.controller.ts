@@ -1,33 +1,44 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   UseGuards,
   Req,
   Res,
   HttpStatus,
+  Patch,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserService } from './user.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { UserEntity } from './user.entity';
+
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
+import { UserEntity } from 'user/user.entity';
+import { UserService } from 'user/user.service';
+import { UpdateUserDto } from 'user/dto';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
+  
   constructor(private userService: UserService) {}
-
-  @ApiOperation({ summary: 'Create user' })
-  @ApiResponse({ status: 201, type: UserEntity }) // Update response type to User
-  @Post()
-  async create(@Body() userDto: CreateUserDto, @Res() res: any) {
+  @ApiOperation({ summary: 'Update user' })
+  @ApiResponse({ status: 201, type: UserEntity })
+  @ApiResponse({ status: 404, description: 'Not found' })
+  @UseGuards(JwtAuthGuard)
+  @Patch('/')
+  async update(@Body() updateUserDto: UpdateUserDto, @Res() res: any) {
     try {
-      const user = await this.userService.createUser(userDto);
-      return res.status(HttpStatus.CREATED).json(user); // Use response object
+      const { email, name } = updateUserDto || {};
+      const user = await this.userService.getUserByEmail(email);
+      if (!user) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: 'User not found' });
+      }    
+    
+      const updatedUser = await this.userService.updateUser({ email }, { name });
+      return res.status(HttpStatus.CREATED).json(updatedUser);
     } catch (error) {
-      // Handle potential errors during creation (optional)
+      
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ message: error.message });
@@ -35,7 +46,8 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Get current user' })
-  @ApiResponse({ status: 200, type: UserEntity }) // Update response type to User
+  @ApiResponse({ status: 200, type: UserEntity })
+  @ApiResponse({ status: 404, description: 'Not found' })
   @UseGuards(JwtAuthGuard)
   @Get('current')
   async current(@Req() req: any, @Res() res: any) {
@@ -49,7 +61,7 @@ export class UserController {
           .json({ message: 'User not found' });
       }
     } catch (error) {
-      // Handle potential errors during retrieval (optional)
+    
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ message: error.message });

@@ -1,14 +1,18 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { BookingModule } from './booking/booking.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { AppService } from './app.service';
-import { AppController } from './app.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+
+import { UserModule } from 'user/user.module';
+import { AuthModule } from 'auth/auth.module';
+import { BookingModule } from 'booking/booking.module';
+import { PrismaModule } from 'prisma/prisma.module';
+import { AppService } from 'app/app.service';
+import { AppController } from 'app/app.controller';
+
+const TTL = 60000;
+const LIMIT = 14;
 
 @Module({
   imports: [
@@ -24,8 +28,8 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
     BookingModule,
     ThrottlerModule.forRoot([
       {
-        ttl: 60000,
-        limit: 15,
+        ttl: TTL,
+        limit: LIMIT,
       },
     ]),
   ],

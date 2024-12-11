@@ -1,3 +1,4 @@
+import { Prisma, PrismaClient } from '@prisma/client';
 import {
   Inject,
   Injectable,
@@ -5,9 +6,9 @@ import {
   Optional,
   OnApplicationShutdown,
 } from '@nestjs/common';
-import { Prisma, PrismaClient } from '@prisma/client';
-import { PrismaServiceOptions } from './interfaces';
-import { PRISMA_SERVICE_OPTIONS } from './prisma.constants';
+
+import { PRISMA_SERVICE_OPTIONS } from 'prisma/prisma.constants';
+import { PrismaServiceOptions } from 'prisma/interfaces';
 
 @Injectable()
 export class PrismaService

@@ -1,6 +1,7 @@
-import { PrismaService } from '../prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
+
+import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
 export class UserRepository {
@@ -8,24 +9,22 @@ export class UserRepository {
 
   /**
    * @desc Find a user by id
-   * @param where Prisma.UserWhereUniqueInput
+   * @param id string
    * @returns Promise<User | null>
    *       If the user is not found, return null
    */
-  findById(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.findUnique({
-      where,
-    });
+  findById(id: string): Promise<User> {
+    return this.prisma.user.findUnique({ where: { id } }) || null;
   }
 
   /**
-   * @desc Find a user by params
-   * @param params Prisma.UserFindFirstArgs
+   * @desc Find a user by email
+   * @param email string
    * @returns Promise<User | null>
    *       If the user is not found, return null
    */
-  async getUserByEmail(params: Prisma.UserFindFirstArgs): Promise<User | null> {
-    return this.prisma.user.findFirst(params);
+  async getUserByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({where: { email }}) || null;
   }
 
   /**
@@ -38,18 +37,19 @@ export class UserRepository {
   }
 
   /**
-   * @desc Find all users with pagination
+   * @desc Update user data
    * @param where Prisma.UserWhereInput
-   * @param orderBy Prisma.UserOrderByWithRelationInput
-   * @returns Promise<PaginatorTypes.PaginatedResult<User>>
+   * @param data Prisma.UserUpdateInput
+   * @returns Promise<User | null>
+   *       If the user is not found, return null
    */
   async updateUser(
     where: Prisma.UserWhereUniqueInput,
     data: Prisma.UserUpdateInput,
-  ): Promise<User> {
+  ): Promise<User | null> {
     return this.prisma.user.update({
       where,
       data,
-    });
+    }) || null;
   }
 }

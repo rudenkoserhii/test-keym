@@ -1,1 +1,1 @@
-export * from './prisma-module-options.interface';
+export * from 'prisma/interfaces/prisma-module-options.interface';

@@ -1,45 +1,48 @@
-import { Body, Controller, Post, Get, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
-import { ApiTags } from '@nestjs/swagger';
-import { CreateUserDto } from '../user/dto/create-user.dto';
-import { AuthService } from './auth.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { UserEntity } from '../user/user.entity';
-import { AuthDto } from './dto/auth.dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { Body, Controller, Post, Get, Req, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+
+import { AuthService } from 'auth/auth.service';
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
+import { AuthDto } from 'auth/dto';
+import { UserEntity } from 'user/user.entity';
+import { CreateUserDto } from 'user/dto';
 
 @ApiTags('Authorisation')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-  @ApiOperation({ summary: 'Create user' })
+  @ApiOperation({ summary: 'Sign Up for user' })
   @ApiResponse({ status: 201, type: [UserEntity] })
+  @ApiResponse({ status: 404, description: 'Not found' })
   @Post('signup')
   registration(@Body() userDto: CreateUserDto) {
     return this.authService.registration(userDto);
   }
-  @ApiOperation({ summary: 'Get user' })
+  @ApiOperation({ summary: 'Log In for user' })
   @ApiResponse({ status: 200, type: [UserEntity] })
+  @ApiResponse({ status: 404, description: 'Not found' })
   @Post('login')
   login(@Body() data: AuthDto) {
     console.log(data);
     return this.authService.login(data);
   }
-  @ApiOperation({ summary: 'Forgot password' })
-  @ApiResponse({ status: 200, type: [UserEntity] })
+  @ApiOperation({ summary: 'User forgot a password' })
+  @ApiResponse({ status: 201, type: [UserEntity] })
   @UseGuards(JwtAuthGuard)
   @Post('forgot')
   forgot(@Body() userDto: CreateUserDto) {
     return this.authService.forgot(userDto);
   }
-  @ApiOperation({ summary: 'Logout user' })
+  @ApiOperation({ summary: 'LogOut for user' })
   @ApiResponse({ status: 200 })
+  @ApiResponse({ status: 404, description: 'Not found' })
   @UseGuards(JwtAuthGuard)
   @Get('logout')
   logout(@Req() req: Request) {
     req.session.destroy(function () {
       delete req.session;
     });
-    return { msg: 'The user session has ended' };
+    return { msg: 'User session has ended' };
   }
 }

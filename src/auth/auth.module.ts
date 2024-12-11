@@ -1,27 +1,22 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { UserModule } from '../user/user.module';
-import { PassportModule } from '@nestjs/passport';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { UserService } from 'src/user/user.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PassportModule } from '@nestjs/passport';
+
+import { AuthController, AuthService } from 'auth';
+import { UserModule } from 'user';
+import { PrismaService } from 'prisma/prisma.service';
+
+const TOKEN_LIVE_DURATION = '30d';
+const SECRET_DEFAULT = 'SECRET';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
-    JwtModule.registerAsync({
-      imports: [
-        UserModule,
-      ],
-      useFactory: () => ({
-        secret: process.env.PRIVATE_KEY || 'SECRET',
-        signOptions: { expiresIn: '30d' },
-      }),
-      inject: [
-        UserService,
-      ],
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET || SECRET_DEFAULT,
+      signOptions: { expiresIn: TOKEN_LIVE_DURATION },
     }),
   ],
   controllers: [AuthController],
