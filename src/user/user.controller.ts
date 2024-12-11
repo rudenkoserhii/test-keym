@@ -4,11 +4,12 @@ import {
   Body,
   UseGuards,
   Req,
-  Res,
   HttpStatus,
   Patch,
+  Res,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response, Request } from 'express';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 import { UserEntity } from 'user/user.entity';
@@ -17,15 +18,15 @@ import { UpdateUserDto } from 'user/dto';
 
 @ApiTags('User')
 @Controller('user')
+@ApiBearerAuth()
 export class UserController {
-  
   constructor(private userService: UserService) {}
   @ApiOperation({ summary: 'Update user' })
-  @ApiResponse({ status: 201, type: UserEntity })
-  @ApiResponse({ status: 404, description: 'Not found' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: UserEntity })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
   @UseGuards(JwtAuthGuard)
   @Patch('/')
-  async update(@Body() updateUserDto: UpdateUserDto, @Res() res: any) {
+  async update(@Body() updateUserDto: UpdateUserDto, @Res() res: Response) {
     try {
       const { email, name } = updateUserDto || {};
       const user = await this.userService.getUserByEmail(email);
@@ -46,13 +47,14 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Get current user' })
-  @ApiResponse({ status: 200, type: UserEntity })
-  @ApiResponse({ status: 404, description: 'Not found' })
+  @ApiResponse({ status: HttpStatus.OK, type: UserEntity })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
   @UseGuards(JwtAuthGuard)
   @Get('current')
-  async current(@Req() req: any, @Res() res: any) {
+  async current(@Req() req: Request, @Res() res: Response) {
     try {
-      const user = await this.userService.getUserByEmail(req.user.email);
+      const { user: { email } = {} } = req || {};
+      const user = await this.userService.getUserByEmail(email);
       if (user) {
         return res.status(HttpStatus.OK).json(user);
       } else {
@@ -60,11 +62,11 @@ export class UserController {
           .status(HttpStatus.NOT_FOUND)
           .json({ message: 'User not found' });
       }
-    } catch (error) {
+    } catch ({ message }) {
     
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message });
+        .json(message);
     }
   }
 }

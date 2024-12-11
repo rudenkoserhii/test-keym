@@ -3,7 +3,6 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from 'app';
-import { ValidationPipe } from 'pipes/validation.pipe';
 
 const DEFAULT_PORT = 5555;
 
@@ -28,11 +27,10 @@ async function start() {
     .setTitle('keym test')
     .setDescription('keym test')
     .setVersion('1.0.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api/docs', app, document);
-
-  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(PORT, () => console.log(`Server started on port = ${PORT}`));
 }

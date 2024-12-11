@@ -16,9 +16,9 @@ const LIMIT = 14;
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    // ConfigModule.forRoot({
+    //   isGlobal: true,
+    // }),
     JwtModule.register({
       global: true,
     }),

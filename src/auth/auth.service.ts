@@ -8,9 +8,11 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 
-import { AuthDto } from 'auth/dto';
+import { AuthDto, AuthForgotDto } from 'auth/dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateUserDto } from 'user/dto';
+
+const SALT = 5;
 
 @Injectable()
 export class AuthService {
@@ -29,7 +31,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const hashPassword = await bcrypt.hash(userDto.password, 5);
+    const hashPassword = await bcrypt.hash(userDto.password, SALT);
     const user = await this.prisma.user.create({
       data: {
         ...userDto,
@@ -44,9 +46,10 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async forgot(userDto: CreateUserDto) {
+  async forgot(authForgotDto: AuthForgotDto) {
+    const { email, password } = authForgotDto || {};
     const candidate = await this.prisma.user.findFirst({
-      where: { email: userDto.email },
+      where: { email },
     });
     if (!candidate) {
       throw new HttpException(
@@ -54,9 +57,9 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const hashPassword = await bcrypt.hash(userDto.password, 5);
+    const hashPassword = await bcrypt.hash(password, SALT);
     const user = await this.prisma.user.update({
-      where: { email: userDto.email },
+      where: { email },
       data: { password: hashPassword },
     });
     return this.generateToken(user);
