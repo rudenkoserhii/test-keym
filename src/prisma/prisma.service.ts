@@ -7,7 +7,7 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 
-import { PRISMA_SERVICE_OPTIONS } from 'prisma/prisma.constants';
+import { PRISMA_SERVICE_OPTIONS } from './prisma.constants';
 import { PrismaServiceOptions } from 'prisma/interfaces';
 
 @Injectable()

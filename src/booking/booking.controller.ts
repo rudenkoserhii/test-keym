@@ -26,6 +26,8 @@ export class BookingController {
   @UseGuards(JwtAuthGuard)
   getAll(@Req() req: Request): Promise<BookingEntity[] | null> {
     const { user: { id: userId } = {} } = req || {};
+    console.log('ssssssss', this.bookingsService.getAllBookings(userId));
+    
     return this.bookingsService.getAllBookings(userId);
   }
 

@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@nestjs/schematics": "^10.2.3",
-    "@nestjs/testing": "^10.4.13",
+    "@nestjs/testing": "^10.4.15",
     "@types/bcryptjs": "^2.4.6",
     "@types/continuation-local-storage": "^3.2.7",
     "@types/express": "^5.0.0",
@@ -86,7 +86,12 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "moduleDirectories": ["node_modules", "src"],
+    "moduleNameMapper": {
+      "^auth/(.*)$": "<rootDir>/src/auth/$1",
+      "^user/(.*)$": "<rootDir>/src/user/$1",
+      "^booking/(.*)$": "<rootDir>/src/booking/$1"
+    },
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
