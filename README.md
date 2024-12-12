@@ -1,73 +1,101 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+KeyM Booking System
+Welcome to the KeyM Booking System, a backend service designed for managing bookings using NestJS and MongoDB.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+- Overview
+This project provides a RESTful API for handling hotel bookings, including creating, reading, updating, and deleting bookings. It uses NestJS for its backend logic, coupled with Prisma for database interactions.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
+```text
+Project Structure
+├── node_modules/                  # Node.js dependencies
+├── prisma/                        # Prisma-related files
+│   ├── schema.prisma              # Prisma schema definition
+├── src/                           # Application source code
+│   ├── app/                       # Core app files
+│   ├── auth/                      # Authentication module
+│   ├── booking/                   # Booking module
+│   ├── prisma/                    # Prisma service-related files
+│   ├── user/                      # User module
+│   ├── types/                     # Custom Type Definitions
+│   ├── main.ts                    # Application entry point
+├── .env                           # Environment variables
+├── .env.example                   # Example of environment variables
+├── .eslintrc.js                   # ESLint configuration
+├── .gitignore                     # Git ignore file
+├── .prettierrc                    # Prettier configuration
+├── Dockerfile.txt                 # Dockerfile for building container
+├── nest-cli.json                  # NestJS CLI configuration
+├── package-lock.json              # NPM lock file
+├── package.json                   # NPM package configuration
+├── README.md                      # Project README
+├── task.md                        # Task documentation
+├── tsconfig.build.json            # TypeScript build configuration
+├── tsconfig.json                  # TypeScript configuration file
 ```
 
-## Running the app
+- Getting Started
+Prerequisites
+Node.js v22.11.0
+MongoDB (for database)
 
+- Installation
+Clone the repository:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone [your-repo-url]
+cd [repo-name]
+```
+- Install dependencies:
+```bash
+npm install
+```
+- Set up environment variables:
+Copy .env.example to .env and fill in the necessary values, especially DATABASE_URL for connecting to MongoDB.
+Run the application:
+```bash
+npm run start:dev
 ```
 
-## Test
-
+- Alternatively, for production:
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run start:prod
 ```
 
-## Support
+- Running Tests
+Unit Tests:
+```bash
+npm run test
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- Features Implemented
+User Authentication: Using JWT for secure API access.
+Booking Management: CRUD operations for bookings.
+Create a booking with validation to avoid time conflicts.
+Retrieve all bookings or a specific booking by ID.
+Update and delete bookings.
+API Documentation: Swagger is integrated for API documentation accessible at /api/docs.
 
-## Stay in touch
+- API Documentation
+Access the Swagger UI at http://localhost:5555/api/docs for detailed API endpoint descriptions.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Code Quality
+Follows NestJS best practices for structure and modularity.
+Uses ESLint and Prettier for code linting and formatting.
+Comprehensive unit and integration tests with Jest.
 
-## License
+- Assumptions and Notes
+The application assumes MongoDB is set up with the database URL provided in .env.
+Time validations (like ensuring start time is before end time) are handled server-side.
+User authentication is implemented with JWT, but session management uses express-session for this example.
 
-Nest is [MIT licensed](LICENSE).
+- Deployment
+The project includes a Dockerfile.txt for containerization. To deploy:
+```bash
+docker build -t keym-booking-system .
+docker run -p 5555:5555 keym-booking-system
+```
+For cloud deployment, services like Render, Vercel, or Railway can be used. Ensure the DATABASE_URL environment variable is correctly set in your deployment environment.
+
+- Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+- License
+This project is unlicensed - see the package.json for more details.
