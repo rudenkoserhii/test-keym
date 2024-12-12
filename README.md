@@ -40,8 +40,8 @@ MongoDB (for database)
 - Installation
 Clone the repository:
 ```bash
-git clone [your-repo-url]
-cd [repo-name]
+git clone https://github.com/rudenkoserhii/test-keym
+cd test-keym
 ```
 - Install dependencies:
 ```bash

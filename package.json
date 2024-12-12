@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "",
   "author": "Serhii Rudenko",
-  "private": true,
   "license": "UNLICENSED",
   "engines": {
     "node": "22.11.0"
