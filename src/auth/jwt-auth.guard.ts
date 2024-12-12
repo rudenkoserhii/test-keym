@@ -14,13 +14,19 @@ const TOKEN_DELIMITER = ' ';
 export class JwtAuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
+  /**
+   * @desc Validates the JWT token from the `Authorization` header and attaches the user to the request object.
+   *       This guard is used to protect routes that require authentication.
+   * @param {ExecutionContext} context - The execution context that contains the request and other metadata.
+   * @returns {boolean | Promise<boolean> | Observable<boolean>} - Returns `true` if the user is authorized, otherwise throws an `UnauthorizedException`.
+   * @throws {UnauthorizedException} - Throws if the `Authorization` header is missing, invalid, or the JWT token is invalid or expired.
+   */
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const req = context.switchToHttp().getRequest();    
     try {
       const authHeader = req?.headers?.authorization;
-      console.log('authHeader', authHeader);
       if (!authHeader) {
         throw new UnauthorizedException({ message: 'Authorization header missing' });
       }
@@ -33,10 +39,8 @@ export class JwtAuthGuard implements CanActivate {
       }
 
       const user = this.jwtService.verify(token);
-      console.log('user', user);
-
       req.user = user;
-      // console.log('req', req);
+
       return true;
     } catch (error) {
       throw new UnauthorizedException({

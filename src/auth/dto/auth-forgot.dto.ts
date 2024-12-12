@@ -6,6 +6,7 @@ export class AuthForgotDto {
   @IsString({ message: 'Must be a string' })
   @IsEmail({}, { message: 'Wrong e-mail' })
   readonly email: string;
+  
   @ApiProperty({ example: '123456', description: 'password' })
   @IsString({ message: 'Must be a string' })
   @Length(4, 16, { message: 'More than 4 & Less than 16' })

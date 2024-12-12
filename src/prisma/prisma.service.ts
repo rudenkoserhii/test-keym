@@ -18,6 +18,12 @@ export class PrismaService
   >
   implements OnModuleInit, OnApplicationShutdown
 {
+
+  /**
+   * @constructor
+   * @param prismaServiceOptions - Optional configuration for the Prisma client.
+   * @description Initializes the PrismaService with options such as middlewares and connection configurations.
+   */  
   constructor(
     @Optional()
     @Inject(PRISMA_SERVICE_OPTIONS)
@@ -32,13 +38,22 @@ export class PrismaService
     }
   }
 
-  async onModuleInit() {
+  /**
+   * @desc Initializes the Prisma client and establishes a connection if `explicitConnect` is set to true in options.
+   * @returns {Promise<void>} - A promise that resolves when the Prisma client is successfully connected.
+   */  
+  async onModuleInit(): Promise<void> {
     if (this.prismaServiceOptions.explicitConnect) {
       await this.$connect();
     }
   }
 
-  async onApplicationShutdown(signal?: string) {
+  /**
+   * @desc Cleans up by disconnecting the Prisma client when the application shuts down.
+   * @param signal - Optional shutdown signal that may be passed during shutdown (e.g., SIGINT, SIGTERM).
+   * @returns {Promise<void>} - A promise that resolves when the Prisma client has disconnected.
+   */  
+  async onApplicationShutdown(signal?: string): Promise<void> {
     await this.$disconnect();
   }
 }

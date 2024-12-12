@@ -21,6 +21,14 @@ import { UpdateUserDto } from 'user/dto';
 @ApiBearerAuth()
 export class UserController {
   constructor(private userService: UserService) {}
+
+  /**
+   * @desc Updates the user's name based on the provided email.
+   * @param {UpdateUserDto} updateUserDto - The data used to update the user.
+   * @param {Response} res - The response object to send the result back to the client.
+   * @returns {Promise<void>} - The response with the updated user data or error message.
+   * @throws {HttpException} - If the user is not found or if there is a server error.
+   */
   @ApiOperation({ summary: 'Update user' })
   @ApiResponse({ status: HttpStatus.CREATED, type: UserEntity })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
@@ -46,6 +54,12 @@ export class UserController {
     }
   }
 
+  /**
+   * @desc Fetches the currently authenticated user's data.
+   * @param {Request} req - The request object containing user information.
+   * @param {Response} res - The response object to send the result back to the client.
+   * @returns {Promise<void>} - The response with the current user's data or error message.
+   */
   @ApiOperation({ summary: 'Get current user' })
   @ApiResponse({ status: HttpStatus.OK, type: UserEntity })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
