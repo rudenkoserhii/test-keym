@@ -57,13 +57,11 @@ describe('BookingService', () => {
     it('should return a booking if it belongs to the user', async () => {
       const bookingId = 'booking-id';
       const userId = 'user-id';
-      const mockBooking = { id: bookingId, userId, hotel: 'Hotel A', startDate: new Date('2024-12-01'), endDate: new Date('2024-12-05') };
-
+      const mockBooking = { id: bookingId, userId, hotel: 'Hotel A', startDate: new Date('2024-12-01'), endDate: new Date('2024-12-05'), user: { id: userId } };
+    
       mockPrismaService.booking.findUnique.mockResolvedValue(mockBooking);
-
+    
       const result = await bookingService.getBookingById(bookingId, userId);
-console.log('result', result);
-
       expect(result).toEqual(mockBooking);
     });
 
@@ -119,12 +117,12 @@ console.log('result', result);
         endDate: new Date('2024-12-05'),
         userId: 'user-id',
       };
-
+    
+      mockPrismaService.booking.findMany.mockResolvedValue([]); // No conflicts
       const newBooking = { id: '1', ...createBookingDto, user: { id: 'user-id', email: 'test@example.com' } };
       mockPrismaService.booking.create.mockResolvedValue(newBooking);
-
+    
       const result = await bookingService.createBooking(createBookingDto);
-
       expect(result).toEqual(newBooking);
       expect(mockPrismaService.booking.create).toHaveBeenCalledWith({ data: createBookingDto, include: { user: true } });
     });

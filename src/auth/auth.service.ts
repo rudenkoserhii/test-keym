@@ -32,8 +32,6 @@ export class AuthService {
     const candidate = await this.prisma.user.findFirst({
       where: { email: userDto.email },
     });
-    console.log('cuserDto', userDto);
-    
     if (candidate) {
       throw new HttpException(
         'User with such e-mail exists',

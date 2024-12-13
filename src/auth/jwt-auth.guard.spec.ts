@@ -81,23 +81,20 @@ describe('JwtAuthGuard', () => {
     });
 
     it('should attach the user to the request and return true if the token is valid', async () => {
+      const request = { headers: { authorization: 'Bearer valid-token' }, user: undefined };
       const context = {
         switchToHttp: () => ({
-          getRequest: () => ({
-            headers: {
-              authorization: 'Bearer valid-token',
-            },
-          }),
+          getRequest: () => request,
         }),
       } as any;
-
+    
       const mockUser = { id: 1, email: 'test@example.com' };
       mockJwtService.verify.mockReturnValue(mockUser);
-
+    
       const result = await guard.canActivate(context);
-
+    
       expect(result).toBe(true);
-      expect(context.switchToHttp().getRequest().user).toEqual(mockUser);
+      expect(request.user).toEqual(mockUser); // Check the 'user' property on the actual request object
       expect(mockJwtService.verify).toHaveBeenCalledWith('valid-token');
     });
   });

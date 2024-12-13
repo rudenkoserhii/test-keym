@@ -24,11 +24,13 @@ export class BookingController {
   @ApiResponse({ status: HttpStatus.OK, type: [BookingEntity] })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
   @UseGuards(JwtAuthGuard)
-  getAll(@Req() req: Request): Promise<BookingEntity[] | null> {
+  async getAll(@Req() req: Request): Promise<BookingEntity[] | null> {
     const { user: { id: userId } = {} } = req || {};
-    console.log('ssssssss', this.bookingsService.getAllBookings(userId));
-    
-    return this.bookingsService.getAllBookings(userId);
+    const bookings = await this.bookingsService.getAllBookings(userId);
+    if (!bookings) {
+      throw new HttpException('Bookings not found', HttpStatus.NOT_FOUND);
+    }
+    return bookings;
   }
 
   /**
@@ -43,9 +45,17 @@ export class BookingController {
   @ApiResponse({ status: HttpStatus.OK, type: BookingEntity })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
   @UseGuards(JwtAuthGuard)
-  getAlone(@Param('id') bookingId: string, @Req() req: Request): Promise<BookingEntity | null> {
+  // getAlone(@Param('id') bookingId: string, @Req() req: Request): Promise<BookingEntity | null> {
+  //   const { user: { id: userId } = {} } = req || {};
+  //   return this.bookingsService.getBookingById(bookingId, userId);
+  // }
+  async getAlone(@Param('id') bookingId: string, @Req() req: Request): Promise<BookingEntity | null> {
     const { user: { id: userId } = {} } = req || {};
-    return this.bookingsService.getBookingById(bookingId, userId);
+    const booking = await this.bookingsService.getBookingById(bookingId, userId);
+    if (!booking) {
+      throw new HttpException('Booking not found', HttpStatus.NOT_FOUND);
+    }
+    return booking;
   }
 
   /**

@@ -37,8 +37,6 @@ export class BookingService {
    * @throws {HttpException} - Throws an exception if the start date is later than the end date, or if the hotel is already booked during the selected period.
    */
   async createBooking(data: CreateBookingDto): Promise<BookingEntity | null> {
-    console.log(data);
-    
     const { hotel, startDate, endDate } = data || {};
     if (startDate > endDate) {
       throw new HttpException('Start date can\'t be later than end date', HttpStatus.BAD_REQUEST);

@@ -90,7 +90,7 @@ describe('BookingController', () => {
             mockBookingService.getAllBookings.mockResolvedValue(null);
 
             await expect(controller.getAll(mockRequest as Request)).rejects.toThrow(
-                new HttpException('Not found', HttpStatus.NOT_FOUND),
+                new HttpException('Bookings not found', HttpStatus.NOT_FOUND),
             );
         });
     });
@@ -123,8 +123,8 @@ describe('BookingController', () => {
             const mockRequest: Partial<Request> = { user: { id: 'another-user-id' } };
             mockBookingService.getBookingById.mockResolvedValue(null);
 
-            await expect(controller.getAlone('1', mockRequest as Request)).resolves.toEqual(
-                new HttpException('Not found', HttpStatus.NOT_FOUND),
+            await expect(controller.getAlone('1', mockRequest as Request)).rejects.toEqual(
+                new HttpException('Booking not found', HttpStatus.NOT_FOUND),
             );
         });
     });
