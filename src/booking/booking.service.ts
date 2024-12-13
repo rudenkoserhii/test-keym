@@ -3,6 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { BookingEntity } from 'booking/booking.entity';
 import { CreateBookingDto, UpdateBookingDto } from 'booking/dto';
+import { MESSAGES } from 'constants/messages.enum';
 
 const EMPTY_ARRAY = 0;
 
@@ -39,7 +40,7 @@ export class BookingService {
   async createBooking(data: CreateBookingDto): Promise<BookingEntity | null> {
     const { hotel, startDate, endDate } = data || {};
     if (startDate > endDate) {
-      throw new HttpException('Start date can\'t be later than end date', HttpStatus.BAD_REQUEST);
+      throw new HttpException(MESSAGES.START_DATE_BIGGER_END_DATE, HttpStatus.BAD_REQUEST);
     }
     const busySlots = await this.prisma.booking.findMany({
       where: {
@@ -49,7 +50,7 @@ export class BookingService {
     });
 
     if (busySlots.length > EMPTY_ARRAY) {
-      throw new HttpException('This hotel is already booked during the selected time period', HttpStatus.BAD_REQUEST);
+      throw new HttpException(MESSAGES.ALREADY_BOOKED, HttpStatus.BAD_REQUEST);
     }
     return this.prisma.booking.create({ data, include: { user: true } }) || null;
   }
@@ -69,7 +70,7 @@ export class BookingService {
     switch (true) {
       case Boolean(hotel && startDate && endDate): 
         if (startDate > endDate) {
-          throw new HttpException('Start date can\'t be later than end date', HttpStatus.BAD_REQUEST);
+          throw new HttpException(MESSAGES.START_DATE_BIGGER_END_DATE, HttpStatus.BAD_REQUEST);
         }
         busySlots = await this.prisma.booking.findMany({
           where: {
@@ -80,12 +81,12 @@ export class BookingService {
         });
 
         if (busySlots.length > EMPTY_ARRAY) {
-          throw new HttpException('This hotel is already booked during the selected time period', HttpStatus.BAD_REQUEST);
+          throw new HttpException(MESSAGES.ALREADY_BOOKED, HttpStatus.BAD_REQUEST);
         };
         break;
       case Boolean(!hotel && startDate && endDate): 
       if (startDate > endDate) {
-        throw new HttpException('Start date can\'t be later than end date', HttpStatus.BAD_REQUEST);
+        throw new HttpException(MESSAGES.START_DATE_BIGGER_END_DATE, HttpStatus.BAD_REQUEST);
       }
       busySlots = await this.prisma.booking.findMany({
         where: {
@@ -96,12 +97,12 @@ export class BookingService {
       });
 
       if (busySlots.length > EMPTY_ARRAY) {
-        throw new HttpException('This hotel is already booked during the selected time period', HttpStatus.BAD_REQUEST);
+        throw new HttpException(MESSAGES.ALREADY_BOOKED, HttpStatus.BAD_REQUEST);
       };
       break;
       case Boolean(!hotel && !startDate && endDate): 
       if (startDateOld > endDate) {
-        throw new HttpException('Start date can\'t be later than end date', HttpStatus.BAD_REQUEST);
+        throw new HttpException(MESSAGES.START_DATE_BIGGER_END_DATE, HttpStatus.BAD_REQUEST);
       }
       busySlots = await this.prisma.booking.findMany({
         where: {
@@ -112,12 +113,12 @@ export class BookingService {
       });
 
       if (busySlots.length > EMPTY_ARRAY) {
-        throw new HttpException('This hotel is already booked during the selected time period', HttpStatus.BAD_REQUEST);
+        throw new HttpException(MESSAGES.ALREADY_BOOKED, HttpStatus.BAD_REQUEST);
       };
       break;
       case Boolean(!hotel && startDate && !endDate): 
       if (startDate > endDateOld) {
-        throw new HttpException('Start date can\'t be later than end date', HttpStatus.BAD_REQUEST);
+        throw new HttpException(MESSAGES.START_DATE_BIGGER_END_DATE, HttpStatus.BAD_REQUEST);
       }
       busySlots = await this.prisma.booking.findMany({
         where: {
@@ -128,7 +129,7 @@ export class BookingService {
       });
 
       if (busySlots.length > EMPTY_ARRAY) {
-        throw new HttpException('This hotel is already booked during the selected time period', HttpStatus.BAD_REQUEST);
+        throw new HttpException(MESSAGES.ALREADY_BOOKED, HttpStatus.BAD_REQUEST);
       };
       break;
       case Boolean(hotel && !startDate && !endDate): 
@@ -141,7 +142,7 @@ export class BookingService {
       });
 
       if (busySlots.length > EMPTY_ARRAY) {
-        throw new HttpException('This hotel is already booked during the selected time period', HttpStatus.BAD_REQUEST);
+        throw new HttpException(MESSAGES.ALREADY_BOOKED, HttpStatus.BAD_REQUEST);
       };
       break;
       default: return;

@@ -4,6 +4,7 @@ import { UserService } from 'user/user.service';
 import { Response } from 'express';
 import { HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { MESSAGES } from 'constants/messages.enum';
 
 const mockUserService = {
     getUserByEmail: jest.fn(),
@@ -56,19 +57,19 @@ describe('UserController', () => {
             await controller.update(updateUserDto, res);
 
             expect(res.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
-            expect(res.json).toHaveBeenCalledWith({ message: 'User not found' });
+            expect(res.json).toHaveBeenCalledWith({ message: MESSAGES.USER_NOT_FOUND });
         });
 
         it('should return 500 if there is an internal error', async () => {
             const updateUserDto = { email: 'user@example.com', name: 'Updated Name' };
             const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as unknown as Response;
 
-            mockUserService.getUserByEmail.mockRejectedValue(new Error('Internal Server Error'));
+            mockUserService.getUserByEmail.mockRejectedValue(new Error(MESSAGES.INTERNAL_SERVER_ERROR));
 
             await controller.update(updateUserDto, res);
 
             expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
-            expect(res.json).toHaveBeenCalledWith({ message: 'Internal Server Error' });
+            expect(res.json).toHaveBeenCalledWith({ message: MESSAGES.INTERNAL_SERVER_ERROR });
         });
     });
 
@@ -96,19 +97,19 @@ describe('UserController', () => {
             await controller.current(req, res);
 
             expect(res.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
-            expect(res.json).toHaveBeenCalledWith({ message: 'User not found' });
+            expect(res.json).toHaveBeenCalledWith({ message: MESSAGES.USER_NOT_FOUND });
         });
 
         it('should return 500 if there is an internal error', async () => {
             const req = { user: { email: 'user@example.com' } } as any;
             const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as unknown as Response;
 
-            mockUserService.getUserByEmail.mockRejectedValue(new Error('Internal Server Error'));
+            mockUserService.getUserByEmail.mockRejectedValue(new Error(MESSAGES.INTERNAL_SERVER_ERROR));
 
             await controller.current(req, res);
 
             expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
-            expect(res.json).toHaveBeenCalledWith('Internal Server Error');
+            expect(res.json).toHaveBeenCalledWith(MESSAGES.INTERNAL_SERVER_ERROR);
         });
     });
 });

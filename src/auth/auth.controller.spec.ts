@@ -4,8 +4,6 @@ import { AuthService } from 'auth/auth.service';
 import { AuthDto, AuthForgotDto } from 'auth/dto';
 import { CreateUserDto } from 'user/dto';
 import { AuthEntity } from 'auth/auth.entity';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
-import { HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 

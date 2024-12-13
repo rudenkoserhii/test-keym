@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from 'app';
+import { ROUTES } from 'constants/routes.enum';
 
 const DEFAULT_PORT = 5555;
 
@@ -30,7 +31,7 @@ async function start() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/api/docs', app, document);
+  SwaggerModule.setup(ROUTES.SWAGGER, app, document);
 
   await app.listen(PORT, () => console.log(`Server started on port = ${PORT}`));
 }

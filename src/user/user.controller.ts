@@ -15,9 +15,12 @@ import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 import { UserEntity } from 'user/user.entity';
 import { UserService } from 'user/user.service';
 import { UpdateUserDto } from 'user/dto';
+import { ROUTES } from 'constants/routes.enum';
+import { MESSAGES } from 'constants/messages.enum';
+import { SWAGGER } from 'constants/swagger.enum';
 
-@ApiTags('User')
-@Controller('user')
+@ApiTags(SWAGGER.USER.CONTROLLER.TAGS)
+@Controller(ROUTES.USER)
 @ApiBearerAuth()
 export class UserController {
   constructor(private userService: UserService) {}
@@ -29,11 +32,11 @@ export class UserController {
    * @returns {Promise<void>} - The response with the updated user data or error message.
    * @throws {HttpException} - If the user is not found or if there is a server error.
    */
-  @ApiOperation({ summary: 'Update user' })
+  @ApiOperation({ summary: SWAGGER.USER.CONTROLLER.UPDATE })
   @ApiResponse({ status: HttpStatus.CREATED, type: UserEntity })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   @UseGuards(JwtAuthGuard)
-  @Patch('/')
+  @Patch(ROUTES.ROOT)
   async update(@Body() updateUserDto: UpdateUserDto, @Res() res: Response) {
     try {
       const { email, name } = updateUserDto || {};
@@ -41,7 +44,7 @@ export class UserController {
       if (!user) {
         return res
           .status(HttpStatus.NOT_FOUND)
-          .json({ message: 'User not found' });
+          .json({ message: MESSAGES.USER_NOT_FOUND });
       }    
     
       const updatedUser = await this.userService.updateUser({ email }, { name });
@@ -60,11 +63,11 @@ export class UserController {
    * @param {Response} res - The response object to send the result back to the client.
    * @returns {Promise<void>} - The response with the current user's data or error message.
    */
-  @ApiOperation({ summary: 'Get current user' })
+  @ApiOperation({ summary: SWAGGER.USER.CONTROLLER.GET_USER })
   @ApiResponse({ status: HttpStatus.OK, type: UserEntity })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   @UseGuards(JwtAuthGuard)
-  @Get('current')
+  @Get(ROUTES.CURRENT)
   async current(@Req() req: Request, @Res() res: Response) {
     try {
       const { user: { email } = {} } = req || {};
@@ -74,7 +77,7 @@ export class UserController {
       } else {
         return res
           .status(HttpStatus.NOT_FOUND)
-          .json({ message: 'User not found' });
+          .json({ message: MESSAGES.USER_NOT_FOUND });
       }
     } catch ({ message }) {
     

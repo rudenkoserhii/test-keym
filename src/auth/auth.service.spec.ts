@@ -1,12 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthService } from './auth.service';
-import { PrismaService } from 'prisma/prisma.service';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { HttpException, HttpStatus, UnauthorizedException } from '@nestjs/common';
-import { AuthDto, AuthForgotDto } from 'auth/dto';
-import { CreateUserDto } from 'user/dto';
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
+
+import { AuthDto, AuthForgotDto } from 'auth/dto';
+import { AuthService } from 'auth/auth.service';
+import { MESSAGES } from 'constants/messages.enum';
+import { PrismaService } from 'prisma/prisma.service';
+import { CreateUserDto } from 'user/dto';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -97,7 +99,7 @@ describe('AuthService', () => {
       prismaService.user.findFirst = jest.fn().mockResolvedValue(mockUser);
 
       await expect(authService.registration(mockCreateUserDto)).rejects.toThrow(
-        new HttpException('User with such e-mail exists', HttpStatus.BAD_REQUEST),
+        new HttpException(MESSAGES.USER_EXISTS, HttpStatus.BAD_REQUEST),
       );
     });
   });
@@ -121,7 +123,7 @@ describe('AuthService', () => {
 
       await expect(authService.login(mockAuthDto)).rejects.toThrow(
         new UnauthorizedException({
-          message: 'The user not exists',
+          message: MESSAGES.USER_NOT_EXISTS,
         }),
       );
     });
@@ -132,7 +134,7 @@ describe('AuthService', () => {
 
       await expect(authService.login(mockAuthDto)).rejects.toThrow(
         new UnauthorizedException({
-          message: 'Wrong e-mail or password',
+          message: MESSAGES.WRONG_CREDENTIALS,
         }),
       );
     });
@@ -161,7 +163,7 @@ describe('AuthService', () => {
       prismaService.user.findFirst = jest.fn().mockResolvedValue(null);
 
       await expect(authService.forgot(mockAuthForgotDto)).rejects.toThrow(
-        new HttpException('No user with such e-mail', HttpStatus.BAD_REQUEST),
+        new HttpException(MESSAGES.USER_EMAIL_NOT_EXISTS, HttpStatus.BAD_REQUEST),
       );
     });
   });
@@ -190,7 +192,7 @@ describe('AuthService', () => {
 
       await expect(authService['validateUser'](mockAuthDto)).rejects.toThrow(
         new UnauthorizedException({
-          message: 'The user not exists',
+          message: MESSAGES.USER_NOT_EXISTS,
         }),
       );
     });
@@ -201,7 +203,7 @@ describe('AuthService', () => {
 
       await expect(authService['validateUser'](mockAuthDto)).rejects.toThrow(
         new UnauthorizedException({
-          message: 'Wrong e-mail or password',
+          message: MESSAGES.WRONG_CREDENTIALS,
         }),
       );
     });

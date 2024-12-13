@@ -7,9 +7,13 @@ import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 import { AuthDto, AuthForgotDto } from 'auth/dto';
 import { AuthEntity } from 'auth/auth.entity';
 import { CreateUserDto } from 'user/dto';
+import { MESSAGES } from 'constants/messages.enum';
+import { ROUTES } from 'constants/routes.enum';
+import { DESCRIPTIONS } from 'constants/descriptions.enum';
+import { SWAGGER } from 'constants/swagger.enum';
 
-@ApiTags('Authorisation')
-@Controller('auth')
+@ApiTags(SWAGGER.AUTH.CONTROLLER.TAGS)
+@Controller(ROUTES.AUTH)
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -19,10 +23,10 @@ export class AuthController {
    * @returns {Promise<UserEntity>} - The created user object including the JWT token for authentication.
    * @throws {HttpException} - Throws an exception if the email already exists in the system.
    */  
-  @ApiOperation({ summary: 'Sign Up for user' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: AuthEntity, description: 'User signed up' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
-  @Post('signup')
+  @ApiOperation({ summary: SWAGGER.AUTH.CONTROLLER.OPERATION_SIGN_UP })
+  @ApiResponse({ status: HttpStatus.CREATED, type: AuthEntity, description: DESCRIPTIONS.SIGNED_UP })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
+  @Post(ROUTES.SIGN_UP)
   registration(@Body() userDto: CreateUserDto): Promise<AuthEntity> {
     return this.authService.registration(userDto);
   }
@@ -33,10 +37,10 @@ export class AuthController {
    * @returns {Promise<AuthEntity>} - The logged-in user object along with a JWT token.
    * @throws {UnauthorizedException} - Throws an exception if the email or password is incorrect.
    */
-  @ApiOperation({ summary: 'Log In for user' })
-  @ApiResponse({ status: HttpStatus.OK, type: AuthEntity, description: 'User logged in' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
-  @Post('login')
+  @ApiOperation({ summary: SWAGGER.AUTH.CONTROLLER.OPERATION_LOG_IN })
+  @ApiResponse({ status: HttpStatus.OK, type: AuthEntity, description: DESCRIPTIONS.LOGGED_IN })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
+  @Post(ROUTES.LOG_IN)
   login(@Body() data: AuthDto): Promise<AuthEntity> {
     return this.authService.login(data);
   }
@@ -47,12 +51,12 @@ export class AuthController {
    * @returns {Promise<UserEntity>} - The updated user object along with a new JWT token after password reset.
    * @throws {HttpException} - Throws an exception if the email does not exist in the system.
    */
-  @ApiOperation({ summary: 'User forgot a password' })
+  @ApiOperation({ summary: SWAGGER.AUTH.CONTROLLER.OPERATION_FORGOT })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.CREATED, type: AuthEntity, description: 'Password updated' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: AuthEntity, description: DESCRIPTIONS.PASSWORD_UPDATED })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   @UseGuards(JwtAuthGuard)
-  @Post('forgot')
+  @Post(ROUTES.FORGOT)
   forgot(@Body() authForgotDto: AuthForgotDto): Promise<AuthEntity> {
     return this.authService.forgot(authForgotDto);
   }
@@ -63,16 +67,16 @@ export class AuthController {
    * @returns {Object} - A message indicating the user has been logged out.
    * @throws {HttpException} - Throws an exception if the session cannot be destroyed.
    */
-  @ApiOperation({ summary: 'LogOut for user' })
+  @ApiOperation({ summary: SWAGGER.AUTH.CONTROLLER.OPERATION_LOG_OUT })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, description: 'User logged out' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Not found' })
+  @ApiResponse({ status: HttpStatus.OK, description: DESCRIPTIONS.LOGGED_OUT })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: MESSAGES.NOT_FOUND })
   @UseGuards(JwtAuthGuard)
-  @Get('logout')
+  @Get(ROUTES.LOG_OUT)
   logout(@Req() req: Request): object {
     req.session.destroy(function () {
       delete req.session;
     });
-    return { message: 'User session has ended' };
+    return { message: MESSAGES.SESSION_ENDED };
   }
 }

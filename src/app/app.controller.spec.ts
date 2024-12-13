@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
+import { AppController } from 'app/app.controller';
+import { AppService } from 'app/app.service';
+import { MESSAGES } from 'constants/messages.enum';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -8,7 +10,7 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     const mockAppService = {
-      getHello: jest.fn().mockReturnValue('Hello!'),
+      getHello: jest.fn().mockReturnValue(MESSAGES.HELLO_GREETINGS),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -22,8 +24,8 @@ describe('AppController', () => {
     appService = module.get<AppService>(AppService);
   });
 
-  it('should return "Hello!"', () => {
-    expect(appController.getHello()).toBe('Hello!');
+  it('should return Greetings', () => {
+    expect(appController.getHello()).toBe(MESSAGES.HELLO_GREETINGS);
   });
 
   it('should call appService.getHello once', () => {

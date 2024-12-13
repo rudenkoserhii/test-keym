@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-const HELLO_GREETINGS = 'Hello!';
+import { MESSAGES } from 'constants/messages.enum';
 
 @Injectable()
 export class AppService {
@@ -10,6 +10,6 @@ export class AppService {
    * @returns {string} The greeting message, which is "Hello!".
    */  
   getHello(): string {
-    return HELLO_GREETINGS;
+    return MESSAGES.HELLO_GREETINGS;
   }
 }

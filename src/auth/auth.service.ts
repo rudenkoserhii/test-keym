@@ -12,6 +12,7 @@ import { AuthDto, AuthForgotDto } from 'auth/dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateUserDto } from 'user/dto';
 import { AuthEntity } from 'auth/auth.entity';
+import { MESSAGES } from 'constants/messages.enum';
 
 const SALT = 5;
 
@@ -34,7 +35,7 @@ export class AuthService {
     });
     if (candidate) {
       throw new HttpException(
-        'User with such e-mail exists',
+        MESSAGES.USER_EXISTS,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -72,7 +73,7 @@ export class AuthService {
     });
     if (!candidate) {
       throw new HttpException(
-        'No user with such e-mail',
+        MESSAGES.USER_EMAIL_NOT_EXISTS,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -109,7 +110,7 @@ export class AuthService {
     });
     if (!user) {
       throw new UnauthorizedException({
-        message: 'The user not exists',
+        message: MESSAGES.USER_NOT_EXISTS,
       });
     }
     
@@ -118,7 +119,7 @@ export class AuthService {
       return user;
     }
     throw new UnauthorizedException({
-      message: 'Wrong e-mail or password',
+      message: MESSAGES.WRONG_CREDENTIALS,
     });
   }
 }

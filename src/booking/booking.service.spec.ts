@@ -4,6 +4,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { BookingEntity } from 'booking/booking.entity';
 import { CreateBookingDto, UpdateBookingDto } from 'booking/dto';
+import { MESSAGES } from 'constants/messages.enum';
 
 describe('BookingService', () => {
   let bookingService: BookingService;
@@ -88,7 +89,7 @@ describe('BookingService', () => {
       };
 
       await expect(bookingService.createBooking(createBookingDto)).rejects.toThrow(new HttpException(
-        'Start date can\'t be later than end date',
+        MESSAGES.START_DATE_BIGGER_END_DATE,
         HttpStatus.BAD_REQUEST,
       ));
     });
@@ -105,7 +106,7 @@ describe('BookingService', () => {
       mockPrismaService.booking.findMany.mockResolvedValue(busySlots);
 
       await expect(bookingService.createBooking(createBookingDto)).rejects.toThrow(new HttpException(
-        'This hotel is already booked during the selected time period',
+        MESSAGES.ALREADY_BOOKED,
         HttpStatus.BAD_REQUEST,
       ));
     });
@@ -158,7 +159,7 @@ describe('BookingService', () => {
       };
 
       await expect(bookingService.updateBookingById(bookingId, updateBookingDto)).rejects.toThrow(new HttpException(
-        'Start date can\'t be later than end date',
+        MESSAGES.START_DATE_BIGGER_END_DATE,
         HttpStatus.BAD_REQUEST,
       ));
     });

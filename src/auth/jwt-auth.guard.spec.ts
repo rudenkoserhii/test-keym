@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
+import { MESSAGES } from 'constants/messages.enum';
 
 describe('JwtAuthGuard', () => {
   let guard: JwtAuthGuard;
@@ -37,7 +38,7 @@ describe('JwtAuthGuard', () => {
       } as any;
 
       await expect(guard.canActivate(context)).rejects.toThrow(
-        new UnauthorizedException({ message: 'Authorization header missing' })
+        new UnauthorizedException({ message: MESSAGES.AUTH_HEADER_MISSING })
       );
     });
 
@@ -53,7 +54,7 @@ describe('JwtAuthGuard', () => {
       } as any;
 
       await expect(guard.canActivate(context)).rejects.toThrow(
-        new UnauthorizedException({ message: 'User is not authorized' })
+        new UnauthorizedException({ message: MESSAGES.NOT_AUTHORIZED })
       );
     });
 
@@ -69,13 +70,13 @@ describe('JwtAuthGuard', () => {
       } as any;
 
       mockJwtService.verify.mockImplementation(() => {
-        throw new Error('Invalid or expired token');
+        throw new Error(MESSAGES.INVALID_TOKEN);
       });
 
       await expect(guard.canActivate(context)).rejects.toThrow(
         new UnauthorizedException({
-          error: 'Invalid or expired token',
-          message: 'User is not authorized',
+          error: MESSAGES.INVALID_TOKEN,
+          message: MESSAGES.NOT_AUTHORIZED,
         })
       );
     });

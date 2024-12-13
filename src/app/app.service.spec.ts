@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppService } from './app.service';
+
+import { MESSAGES } from 'constants/messages.enum';
+import { AppService } from 'app/app.service';
 
 describe('AppService', () => {
   let service: AppService;
@@ -12,7 +14,7 @@ describe('AppService', () => {
     service = module.get<AppService>(AppService);
   });
 
-  it('should return "Hello!"', () => {
-    expect(service.getHello()).toBe('Hello!');
+  it('should return Greetengs', () => {
+    expect(service.getHello()).toBe(MESSAGES.HELLO_GREETINGS);
   });
 });
